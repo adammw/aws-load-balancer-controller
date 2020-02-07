@@ -21,3 +21,4 @@ mockery -name ShieldAPI -dir ./vendor/github.com/aws/aws-sdk-go/service/shield/s
 mockgen -destination=./mocks/aws-alb-ingress-controller/ingress/auth/mock.go github.com/kubernetes-sigs/aws-alb-ingress-controller/internal/ingress/auth Module
 mockgen -destination=./mocks/controller-runtime/cache/mock.go sigs.k8s.io/controller-runtime/pkg/cache Cache
 mockgen -destination=./mocks/controller-runtime/controller/mock.go sigs.k8s.io/controller-runtime/pkg/controller Controller
+mockgen -destination=./mocks/controller-runtime/client/mock_client.go sigs.k8s.io/controller-runtime/pkg/client Client
