@@ -1,34 +1,27 @@
-# syntax=docker/dockerfile:experimental
+# Build the manager binary
+FROM golang:1.13 as builder
 
-FROM --platform=${BUILDPLATFORM} golang:1.15.0 AS base
-WORKDIR /src
-COPY go.mod go.sum ./
-RUN GOPROXY=direct go mod download
+WORKDIR /workspace
+# Copy the Go Modules manifests
+COPY go.mod go.mod
+COPY go.sum go.sum
+# cache deps before building and copying source so that we don't need to re-download as much
+# and so that source changes don't invalidate our downloaded layer
+RUN go mod download
 
-FROM base AS build
-ARG TARGETOS
-ARG TARGETARCH
-RUN --mount=type=bind,target=. \
-    --mount=type=cache,target=/root/.cache/go-build \
-    GOOS=${TARGETOS} GOARCH=${TARGETARCH} COMPILE_OUTPUT="/out/controller" make compile
+# Copy the go source
+COPY main.go main.go
+COPY api/ api/
+COPY controllers/ controllers/
 
-FROM golangci/golangci-lint:v1.27-alpine AS lint-base
+# Build
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GO111MODULE=on go build -a -o manager main.go
 
-FROM base AS lint
-RUN --mount=type=bind,target=. \
-    --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=cache,target=/root/.cache/golangci-lint \
-    --mount=from=lint-base,src=/usr/bin/golangci-lint,target=/usr/bin/golangci-lint \
-    golangci-lint run --timeout 10m0s ./...
+# Use distroless as minimal base image to package the manager binary
+# Refer to https://github.com/GoogleContainerTools/distroless for more details
+FROM gcr.io/distroless/static:nonroot
+WORKDIR /
+COPY --from=builder /workspace/manager .
+USER nonroot:nonroot
 
-
-FROM amazonlinux:2 as amazonlinux
-FROM scratch AS bin-unix
-COPY --from=build /out/controller /controller
-COPY --from=amazonlinux /etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/
-ENTRYPOINT ["/controller"]
-
-FROM bin-unix AS bin-linux
-FROM bin-unix AS bin-darwin
-
-FROM bin-${TARGETOS} as bin
+ENTRYPOINT ["/manager"]
