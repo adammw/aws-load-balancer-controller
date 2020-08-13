@@ -22,3 +22,4 @@ mockgen -destination=./mocks/aws-alb-ingress-controller/ingress/auth/mock.go git
 mockgen -destination=./mocks/controller-runtime/cache/mock.go sigs.k8s.io/controller-runtime/pkg/cache Cache
 mockgen -destination=./mocks/controller-runtime/controller/mock.go sigs.k8s.io/controller-runtime/pkg/controller Controller
 mockgen -destination=./mocks/controller-runtime/client/mock_client.go sigs.k8s.io/controller-runtime/pkg/client Client
+mockgen -destination=./mocks/aws/services/mock_elbv2.go sigs.k8s.io/aws-alb-ingress-controller/pkg/aws/services ELBV2
