@@ -1,10 +1,10 @@
-# How ALB ingress controller works
+# How AWS Load Balancer controller works
 
 ## Design
 
 The following diagram details the AWS components this controller creates. It also demonstrates the route ingress traffic takes from the ALB to the Kubernetes cluster.
 
-![controller-design](../../imgs/controller-design.png)
+![controller-design](../../assets/images/controller-design.png)
 
 ### Ingress Creation
 
@@ -32,7 +32,7 @@ Along with the above, the controller also...
   recover if the controller were to be restarted.
 
 ### Ingress Traffic
-ALB Ingress controller supports two traffic modes:
+AWS Load Balancer controller supports two traffic modes:
 * Instance mode
 * IP mode
 

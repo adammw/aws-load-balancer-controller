@@ -1,6 +1,6 @@
 # Redirect Traffic from HTTP to HTTPS
 
-We'll use the [`alb.ingress.kubernetes.io/actions.${action-name}`](../ingress/annotation.md#actions) annotation to setup an ingress to redirect http traffic into https
+We'll use the [`alb.ingress.kubernetes.io/actions.${action-name}`](../ingress/annotations.md#actions) annotation to setup an ingress to redirect http traffic into https
 
 
 ## Example Ingress Manifest
@@ -41,6 +41,6 @@ spec:
 ## How it works
 By default, all rules specified in ingress spec will be applied to all listeners(one listener per port) on ALB.
 
-If there is an redirection rule, the ALB ingress controller will check it against every listener(port) to see whether it will introduce infinite redirection loop, and **will ignore that rule for specific listener.**
+If there is an redirection rule, the AWS Load Balancer controller will check it against every listener(port) to see whether it will introduce infinite redirection loop, and **will ignore that rule for specific listener.**
 
 So for our above example, the rule by `ssl-redirect` will only been applied to http(80) listener.

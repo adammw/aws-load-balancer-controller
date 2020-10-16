@@ -1,5 +1,5 @@
 # Ingress specification
-This document covers how ingress resources work in relation to The ALB Ingress Controller.
+This document covers how ingress resources work in relation to The AWS Load Balancer Controller.
 
 An example ingress, from [example](../../examples/2048/2048-ingress.yaml) is as follows.
 
@@ -24,8 +24,8 @@ spec:
               servicePort: 80
 ```
 
-The host field specifies the eventual Route 53-managed domain that will route to this service. 
+The host field specifies the eventual Route 53-managed domain that will route to this service.
 
 The service, service-2048, must be of type NodePort in order for the provisioned ALB to route to it.(see [echoserver-service.yaml](../../examples/echoservice/echoserver-service.yaml))
 
-For details on purpose of annotations seen above, see [Annotations](annotation.md).
+For details on purpose of annotations seen above, see [Annotations](annotations.md).
