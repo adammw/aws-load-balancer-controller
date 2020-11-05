@@ -1,6 +1,6 @@
 <p align="center">
-    <img src="assets/images/kubernetes_icon.svg" alt="Kubernetes logo" width="200" />
-    <img src="assets/images/aws_load_balancer_icon.svg" alt="AWS Load Balancer logo" width="200" />
+    <img src="docs/assets/images/kubernetes_icon.svg" alt="Kubernetes logo" width="200" />
+    <img src="docs/assets/images/aws_load_balancer_icon.svg" alt="AWS Load Balancer logo" width="200" />
 </p>
 <p align="center">
     <strong>
@@ -52,3 +52,5 @@ This project was formerly known as "AWS ALB Ingress Controller", we rebranded it
 
 If you think you’ve found a potential security issue, please do not post it in the Issues.  Instead, please follow the instructions [here](https://aws.amazon.com/security/vulnerability-reporting/) or [email AWS security directly](mailto:aws-security@amazon.com).
 
+## Documentation
+Checkout our [Live Docs](https://kubernetes-sigs.github.io/aws-load-balancer-controller/)!
