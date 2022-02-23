@@ -253,11 +253,11 @@ func Test_defaultModelBuilderTask_buildSubnetMappings(t *testing.T) {
 			want: []elbv2.SubnetMapping{
 				{
 					SubnetID:     "subnet-1",
-					AllocationID: aws.String("eip1"),
+					AllocationID: core.LiteralStringToken("eip1"),
 				},
 				{
 					SubnetID:     "subnet-2",
-					AllocationID: aws.String("eip2"),
+					AllocationID: core.LiteralStringToken("eip2"),
 				},
 			},
 		},

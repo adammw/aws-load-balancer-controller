@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net"
 	"regexp"
+	"sigs.k8s.io/aws-load-balancer-controller/pkg/model/core"
 	"sort"
 	"strconv"
 
@@ -185,19 +186,29 @@ func (t *defaultModelBuildTask) buildLoadBalancerTags(ctx context.Context) (map[
 
 func (t *defaultModelBuildTask) buildLoadBalancerSubnetMappings(ctx context.Context, scheme elbv2model.LoadBalancerScheme, ec2Subnets []*ec2.Subnet) ([]elbv2model.SubnetMapping, error) {
 	var eipAllocation []string
-	eipConfigured := t.annotationParser.ParseStringSliceAnnotation(annotations.SvcLBSuffixEIPAllocations, &eipAllocation, t.service.Annotations)
+	eipAllocConfigured := t.annotationParser.ParseStringSliceAnnotation(annotations.SvcLBSuffixEIPAllocations, &eipAllocation, t.service.Annotations)
+	var eipPool []string
+	eipPoolConfigured := t.annotationParser.ParseStringSliceAnnotation(annotations.SvcLBSuffixEIPIpv4Pool, &eipPool, t.service.Annotations)
 	var privateIpv4Addresses []string
 	ipv4Configured := t.annotationParser.ParseStringSliceAnnotation(annotations.SvcLBSuffixPrivateIpv4Addresses, &privateIpv4Addresses, t.service.Annotations)
 
 	// Validation
-	if eipConfigured && ipv4Configured {
+	if eipAllocConfigured && ipv4Configured {
 		return []elbv2model.SubnetMapping{}, errors.Errorf("only one of EIP allocations or PrivateIpv4Addresses can be set")
 	}
-	if eipConfigured {
+	if eipAllocConfigured && eipPoolConfigured {
+		return []elbv2model.SubnetMapping{}, errors.Errorf("only one of EIP allocations or pool can be set")
+	}
+	if eipAllocConfigured {
 		if scheme == elbv2model.LoadBalancerSchemeInternal {
 			return []elbv2model.SubnetMapping{}, errors.Errorf("EIP allocations can only be set for internet facing load balancers")
 		} else if len(eipAllocation) != len(ec2Subnets) {
 			return []elbv2model.SubnetMapping{}, errors.Errorf("number of EIP allocations (%d) and subnets (%d) must match", len(eipAllocation), len(ec2Subnets))
+		}
+	}
+	if eipPoolConfigured {
+		if scheme == elbv2model.LoadBalancerSchemeInternal {
+			return []elbv2model.SubnetMapping{}, errors.Errorf("EIP pool can only be set for internet facing load balancers")
 		}
 	}
 	if ipv4Configured {
@@ -210,11 +221,19 @@ func (t *defaultModelBuildTask) buildLoadBalancerSubnetMappings(ctx context.Cont
 
 	subnetMappings := make([]elbv2model.SubnetMapping, 0, len(ec2Subnets))
 	for idx, subnet := range ec2Subnets {
+		subnetID := aws.StringValue(subnet.SubnetId)
 		mapping := elbv2model.SubnetMapping{
-			SubnetID: aws.StringValue(subnet.SubnetId),
+			SubnetID: subnetID,
 		}
-		if eipConfigured {
-			mapping.AllocationID = aws.String(eipAllocation[idx])
+		if eipAllocConfigured {
+			mapping.AllocationID = core.LiteralStringToken(eipAllocation[idx])
+		}
+		if eipPoolConfigured {
+			eip, err := t.buildElasticIPAddress(ctx, subnetID)
+			if err != nil {
+				return []elbv2model.SubnetMapping{}, err
+			}
+			mapping.AllocationID = eip.AllocationID()
 		}
 		if ipv4Configured {
 			ip, err := t.getMatchingIPforSubnet(ctx, subnet, privateIpv4Addresses)

@@ -9,6 +9,7 @@
 ~/go/bin/mockgen -package=webhook -destination=./pkg/webhook/validator_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/webhook Validator
 ~/go/bin/mockgen -package=k8s -destination=./pkg/k8s/finalizer_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/k8s FinalizerManager
 ~/go/bin/mockgen -package=k8s -destination=./pkg/k8s/pod_info_repo_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/k8s PodInfoRepo
+~/go/bin/mockgen -package=networking -destination=./pkg/networking/elastic_ip_address_manager_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/networking ElasticIPAddressManager
 ~/go/bin/mockgen -package=networking -destination=./pkg/networking/security_group_manager_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/networking SecurityGroupManager
 ~/go/bin/mockgen -package=networking -destination=./pkg/networking/subnet_resolver_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/networking SubnetsResolver
 ~/go/bin/mockgen -package=networking -destination=./pkg/networking/az_info_provider_mocks.go sigs.k8s.io/aws-load-balancer-controller/pkg/networking AZInfoProvider
