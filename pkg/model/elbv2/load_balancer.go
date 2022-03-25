@@ -66,8 +66,10 @@ func (lb *LoadBalancer) DNSName() core.StringToken {
 // register dependencies for LoadBalancer.
 func (lb *LoadBalancer) registerDependencies(stack core.Stack) {
 	for _, subnetMapping := range lb.Spec.SubnetMappings {
-		for _, dep := range subnetMapping.AllocationID.Dependencies() {
-			stack.AddDependency(dep, lb)
+		if subnetMapping.AllocationID != nil {
+			for _, dep := range subnetMapping.AllocationID.Dependencies() {
+				stack.AddDependency(dep, lb)
+			}
 		}
 	}
 
