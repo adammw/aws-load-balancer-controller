@@ -8,15 +8,12 @@ echo "Running e2e tests for aws-load-balancer-controller with the following vari
 KUBE_CONFIG_PATH:  $KUBE_CONFIG_PATH
 CLUSTER_NAME: $CLUSTER_NAME
 REGION: $REGION
-ENDPOINT: $ENDPOINT
-OS_OVERRIDE: $OS_OVERRIDE"
+IP_FAMILY: $IP_FAMILY
+OS_OVERRIDE: $OS_OVERRIDE
+ENDPOINT: $ENDPOINT"
 
 if [[ -z "${OS_OVERRIDE}" ]]; then
   OS_OVERRIDE=linux
-fi
-
-if [[ -n "${ENDPOINT}" ]]; then
-  ENDPOINT_FLAG="--endpoint $ENDPOINT"
 fi
 
 if [[ -z "${SKIP_MAKE_TEST_BINARIES}" ]]; then
